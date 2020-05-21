@@ -1,0 +1,8 @@
+lxml
+redis==3.2.0
+pytest==3.6.0
+coverage==4.5
+pytest-cov==2.5.1
+requests
+luigi==2.8.9
+sqlalchemy

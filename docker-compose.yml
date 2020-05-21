@@ -1,0 +1,50 @@
+version: '2.1'
+
+services:
+  general:
+    image: robot_python
+    build:
+      context: .
+      dockerfile: ./deploy/backend.dockerfile
+    restart: on-failure
+    volumes:
+      - "./backend:/var/www/"
+    environment:
+      - PYTHONPATH=/var/www
+      - PYTHONUNBUFFERED=1
+
+  huey:
+    extends:
+      service: general
+    command: bash -c "python /var/www/tasks.py"
+
+  webinterface:
+    extends:
+      service: general
+    restart: on-failure
+    volumes:
+      - "./backend:/var/www/"
+      - "./deploy/luigi.cfg:/etc/luigi/client.cfg"
+    ports:
+      - 8082:8082
+    environment:
+      - PYTHONPATH=/var/www
+      - PYTHONUNBUFFERED=1
+    command: bash -c "luigid"
+
+  redis:
+    image: redis:latest
+    hostname: redis
+    restart: on-failure
+    volumes:
+      - "./deploy/redis.conf:/etc/redis.conf"
+      - robot_redis:/data:rw
+    command: /usr/local/bin/redis-server /etc/redis.conf
+    ports:
+      - 6379:6379
+    networks:
+      - default
+
+volumes:
+  robot_redis:
+  robot_postgresql:
