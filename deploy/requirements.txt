@@ -1,5 +1,5 @@
 lxml
-redis==3.2.0
+redis==4.5.3
 pytest==3.6.0
 coverage==4.5
 pytest-cov==2.5.1
